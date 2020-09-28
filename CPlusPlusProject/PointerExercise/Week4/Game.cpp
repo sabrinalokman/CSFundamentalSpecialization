@@ -1,6 +1,6 @@
 #include "Game.h"
 #include "Stack.h"
-#include "uiuc/Cube.h"
+#include "Cube.h"
 #include <iostream>
 using std::cout;
 using std::endl;
@@ -34,7 +34,7 @@ Game::Game() {
 
 std::ostream& operator <<(std::ostream & os, const Game & game) {
 	for (unsigned i = 0; i < game.stacks_.size(); i++) {
-		os << "Stack[" << i << "]: " << game.stacks_[i];
+		os << "Stack[" << i << "]: " << game.stacks_[i] << std::endl;
 	}
 	return os;
 }

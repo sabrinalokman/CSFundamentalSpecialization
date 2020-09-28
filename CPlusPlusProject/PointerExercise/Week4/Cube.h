@@ -1,5 +1,8 @@
 // tower of hanoi problem
 
+#pragma once
+#include "HSLAPixel.h"
+
 namespace uiuc {
 	class Cube {
 	public:

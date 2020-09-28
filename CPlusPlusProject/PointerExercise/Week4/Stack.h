@@ -1,3 +1,9 @@
+#pragma once
+
+#include <vector>
+#include "Cube.h"
+using uiuc::Cube;
+
 class Stack {
 public:
 	void push_back(const Cube & cube);
