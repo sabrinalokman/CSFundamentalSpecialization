@@ -1,4 +1,3 @@
-
 /**
  * @file LinkedListExercises.h
  * University of Illinois CS 400, MOOC 2, Week 1: Linked List
@@ -11,12 +10,10 @@
 
 /********************************************************************
   Week 1: Linked List and Merge Sort Exercises
-
   There are two exercises in this file. Please read the code comments
   below and see the provided instructions PDF before you begin. The
   other provided code files in the starter zip also contain important
   comments and hints about how to approach this.
-
   This is the only file you can edit for the sake of grading! You can
   edit the other provided starter files for testing purposes, but the
   autograder will assume that this is the only file that has been edited
@@ -37,25 +34,20 @@
 
 /********************************************************************
   Exercise 1: insertOrdered
-
   This LinkedList member function assumes that the current contents
   of the list are already sorted in increasing order. The function
   takes as input a new data item to be inserted to the same list.
   The new data item should be inserted to the list in the correct
   position, so that you preserve the overall sorted state of the list.
-
   For example, if your LinkedList<int> contains:
   [1, 2, 8, 9]
   And the input is 7, then the list should be updated to contain:
   [1, 2, 7, 8, 9]
-
   To be more precise, a new node should be created on the heap, and
   it should be inserted in front of the earliest node in the list that
   contains a greater data element. If no such other node exists, then
   the new item should be placed at the end (the back of the list).
-
   Also, be sure to update the size_ member of the list appropriately.
-
   Your implementation of this function should not change the memory
   locations of the existing nodes. That is, you should not push or pop
   the existing elements of the list if it would change their address.
@@ -67,19 +59,17 @@
   as well as any prev or next pointers of adjacent nodes in the list.
   Remember: LinkedList is a doubly-linked list. That means each node
   also refers to the previous item in the list, not just the next item.
-
   A correct implementation of this function has O(n) time complexity
   for a list of length n. That is, in the worst case, you would
   traverse each element of the list some constant number of times.
-
   You can use "make test" followed by "./test" to check the correctness
   of your implementation, and then you can use "./test [bench]" to run
   some interesting benchmarks on the speed of your code.
-
  ********************************************************************/
 
 template <typename T>
-void LinkedList<T>::insertOrdered(const T& newData) {
+void LinkedList<T>::insertOrdered(const T &newData)
+{
 
   // -----------------------------------------------------------
   // TODO: Your code here!
@@ -92,7 +82,7 @@ void LinkedList<T>::insertOrdered(const T& newData) {
   // go in the list. A good way to do this is by considering special
   // base cases first, then walk the list from front to back and find
   // the earliest position where you should insert the new node.
-  
+
   // When you insert the node, make sure to update any and all pointers
   // between it and adjacent nodes accordingly (next and prev pointers).
   // You may also need to update the head_ and tail_ pointers in some
@@ -102,13 +92,13 @@ void LinkedList<T>::insertOrdered(const T& newData) {
   // other provided code for this project!
 
   // More hints:
-  
+
   // First, practice your technique for traversing the list from front
   // to back. You can see examples of several ways to do this throughout
   // the provided code for this project. We recommend that you try using
   // a temporary pointer that you update to track your position as you
   // traverse from node to node.
-  
+
   // Consider all the cases that can happen when you're trying to insert
   // the new node. Is the list currently empty? Does the new node go
   // at the beginning? Does it go somewhere in the middle? Does it go
@@ -127,12 +117,50 @@ void LinkedList<T>::insertOrdered(const T& newData) {
   // they don't handle the null pointer at the tail properly. Be careful
   // to update all next, prev, head_, and tail_ pointers as needed on your
   // new node or on those existing nodes that are adjacent to the new node.
+  Node *newNode = new Node(newData);
+  if (!head_)
+  {
+    // If empty, insert as the only item as both head and tail.
+    // The Node already has next and prev set to nullptr by default.
+    head_ = newNode;
+    tail_ = newNode;
+  }
+  // If new item is smaller than current head data, then add the new item as the head.
+  else if (newData < head_->data)
+  {
+    Node *oldHead = head_;
+    oldHead->prev = newNode;
+    newNode->next = oldHead;
+    head_ = newNode;
+  }
+  else if (newData > tail_->data)
+  {
+    Node *oldTail = tail_;
+    oldTail->next = newNode;
+    newNode->prev = oldTail;
+    tail_ = newNode;
+  }
+  else
+  {
+    Node *cur = head_->next;
+    while (cur && newData > cur->data)
+    {
+      cur = cur->next;
+    }
+    Node *oldNode = cur;
+    newNode->next = oldNode;
+    newNode->prev = oldNode->prev;
+    oldNode->prev->next = newNode;
+    oldNode->prev = newNode;
+    cur = newNode;
+  }
 
+  // update size
+  size_++;
 }
 
 /********************************************************************
   Exercise 2: Linear-time Merge
-
   This LinkedList member function is intended to perform the classic
   "merge" operation from the mergesort algorithm. It combines two sorted
   lists into a single sorted list. This algorithm is intended to run
@@ -141,7 +169,6 @@ void LinkedList<T>::insertOrdered(const T& newData) {
   the two lists and then apply a sorting algorithm. Instead, the merge
   algorithm relies on the fact that the two input lists are already sorted
   separately in order to create the merged, sorted list in linear time.
-
   One of the implied input lists is the "*this" LinkedList instance that
   is calling the function, and the other input list is explicitly specified
   as the function argument "other". The function does NOT change either
@@ -149,26 +176,21 @@ void LinkedList<T>::insertOrdered(const T& newData) {
   Instead, this function makes a new list containing the merged result,
   and it returns a copy of the new list. For example, one usage might
   look like this (OUTSIDE of this function, where we are making the call):
-
   LinkedList<int> leftList;
   // [... Add some sorted contents to leftList here. ...]
   LinkedList<int> rightList;
   // [... Add some sorted contents to rightList here. ...]
   LinkedList<int> mergedList = leftList.merge(rightList);
-
   You may assume that the two input lists have already been sorted.
   However, the lists may be empty, and they may contain repeated or
   overlapping elements. The lists may also have different lengths.
   For example, it's possible that these are the two input lists:
-
   Left list: [1, 2, 2, 3, 5, 5, 5, 6]
   Right list: [1, 3, 5, 7]
-
   And the result of merging those two sorted lists will contain all
   of the same elements, including the correct number of any duplicates,
   in sorted order:
   [1, 1, 2, 2, 3, 3, 5, 5, 5, 5, 6, 7]
-
   Because your implementation of this function operates on const inputs
   and returns a newly created list, you do not need to maintain the
   previous memory locations of any nodes as required in Exercise 1.
@@ -178,15 +200,12 @@ void LinkedList<T>::insertOrdered(const T& newData) {
   to make it simpler (such as push and pop), or you may edit the contents
   of lists explicitly by changing the pointers of a list or of its nodes
   (such as head_, tail_, next, and prev).
-
   Be sure that the size_ member of the resulting list is correct.
-
   A correct implementation of this function has O(n) time complexity
   for a list of length n. That is, in the worst case, you would
   traverse each element of the list some constant number of times.
   
   Important notes for getting the correct running time:
-
   1. Since both lists being merged are already sorted themselves, there
      is a way to merge them together into a single sorted list in a single
      traversal pass down the lists. This can run in O(n) time.
@@ -195,15 +214,14 @@ void LinkedList<T>::insertOrdered(const T& newData) {
      result in a very slow running time. (The insertOrdered function was
      part of the insertion sort exercise. It has nothing to do with merge
      or merge sort.)
-
   You can use "make test" followed by "./test" to check the correctness
   of your implementation, and then you can use "./test [bench]" to run
   some interesting benchmarks on the speed of your code.
-
  ********************************************************************/
 
 template <typename T>
-LinkedList<T> LinkedList<T>::merge(const LinkedList<T>& other) const {
+LinkedList<T> LinkedList<T>::merge(const LinkedList<T> &other) const
+{
 
   // You can't edit the original instance of LinkedList that is calling
   // merge because the function is marked const, and the "other" input
@@ -217,7 +235,7 @@ LinkedList<T> LinkedList<T>::merge(const LinkedList<T>& other) const {
   // So if this function was called as "A.merge(B)", then now, "left"
   // is a temporary copy of the "A" and "right" is a temporary copy
   // of the "B".
-  
+
   // We will also create an empty list called "merged" where we can build
   // the final result we want. This is what we will return at the end of
   // the function.
@@ -253,6 +271,27 @@ LinkedList<T> LinkedList<T>::merge(const LinkedList<T>& other) const {
   // notice that all of our nodes are created on the heap? The part of the
   // list that we pass back is really small; it just contains two pointers
   // and an int.)
+  while (!left.empty() && !right.empty())
+  {
+    if (left.front() < right.front())
+    {
+      merged.pushBack(left.front());
+      left.popFront();
+    }
+    else
+    {
+      merged.pushBack(right.front());
+      right.popFront();
+    }
+  }
+
+  LinkedList<T> nonEmpty = (!left.empty()) ? left : right;
+
+  while (!nonEmpty.empty())
+  {
+    merged.pushBack(nonEmpty.front());
+    nonEmpty.popFront();
+  }
+
   return merged;
 }
-
