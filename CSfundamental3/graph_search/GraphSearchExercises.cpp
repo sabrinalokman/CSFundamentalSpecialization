@@ -53,7 +53,9 @@ int GridGraph::countEdges() const
   // =======================================================================
   // TODO: Your code here!
   // =======================================================================
+  if (adjacencyMap.empty())
     return 0;
+
   std::unordered_set<IntPairPair> edgeSet;
 
   for (const auto &keyval : adjacencyMap)
